@@ -1,9 +1,12 @@
 # CoAP Signaling Messages
 
-This is the working area for the Individual internet-draft, "CoAP Signaling Messages".
+This is the working area for the Individual internet-draft, "CoAP
+Signaling Messages".  If the IETF CoRE WG reaches consensus on
+adopting it, it will then probably be merged into the
+[coap-tcp-tls](https://core-wg.github.io/coap-tcp-tls/) draft.
 
-* [Editor's copy](https://core-wg.github.io/coap-sig/)  [![Build Status](https://travis-ci.org/core-wg/coap-sig.svg?branch=master)](https://travis-ci.org/core-wg/coap-sig)
-* [Individual Draft] (https://tools.ietf.org/html/draft-bormann-core-coap-sig-latest)
+* [Editor's copy: use this for perusing the work as it progresses](https://core-wg.github.io/coap-sig/)  [![Build Status](https://travis-ci.org/core-wg/coap-sig.svg?branch=master)](https://travis-ci.org/core-wg/coap-sig)
+* [Individual Draft as in the Internet-Draft repository](https://tools.ietf.org/html/draft-bormann-core-coap-sig)
 
 
 ## Building the Draft
