@@ -2,7 +2,7 @@
 
 This is the working area for the Individual internet-draft, "CoAP Signaling Messages".
 
-* [Editor's copy](https://core-wg.github.io/coap-sig/)
+* [Editor's copy](https://core-wg.github.io/coap-sig/)  [![Build Status](https://travis-ci.org/core-wg/coap-sig.svg?branch=master)](https://travis-ci.org/core-wg/coap-sig)
 * [Individual Draft] (https://tools.ietf.org/html/draft-bormann-core-coap-sig-latest)
 
 
