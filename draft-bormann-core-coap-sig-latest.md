@@ -15,9 +15,9 @@ pi:
   inline: 'yes'
 title: CoAP Signaling Messages
 # abbrev:
-area: Applications Area (app)
+area: Applications and Real-time Area (art)
 wg: CORE
-date: 2016-06-11
+date: 2016-06-27
 author:
 - role: editor
   ins: C. Bormann
@@ -45,9 +45,10 @@ normative:
 #   RFC0793: tcp
 #   RFC7301: alpn
 #   I-D.ietf-dice-profile:
+   RFC5226:
 informative:
 #   I-D.bormann-core-cocoa: cocoa
-#  I-D.ietf-core-block: block
+  I-D.ietf-core-block: block
 #  I-D.bormann-core-block-bert: bert
   I-D.ietf-core-coap-tcp-tls: reliable
 #   RFC0768: udp
@@ -106,6 +107,8 @@ familiar from the programming language C, except that the operator
 
 Signaling messages are structured like any other CoAP message; they
 have a code, a token, options, and optionally a payload.
+(See Section 3 of {{-coap}} for the overall structure, as adapted to the
+specific transport.)
 The code for a signaling message comes from the 7.xx space.
 
 Option numbers for signaling messages are specific to the message
@@ -135,7 +138,7 @@ peer receiving the message.
 Capability and Settings messages are used for two purposes:
 
 * Capability indication options indicate a capability of the emitter
-  to the peer.  Capability options are generally elective options.
+  to the receiving peer.  Capability options are generally elective options.
 
 * Setting options indicate a setting that will be applied by the
   emitter.  Setting options are generally critical options.
@@ -191,6 +194,26 @@ carries a "uint" value, indicating the message size in bytes.  As per
 Section 4.6 of {{-coap}}, the default value (and the value used when
 this Option is not implemented) is 1152.
 
+## Block-wise-Transfer Capability Indication Option
+
+An emitter can indicate that it supports the block-wise transfer
+protocol defined in {{-block}}.
+
+The Block-wise-Transfer option is defined as follows:
+
+| Option Number | Applies to | Option Name         | Reference |
+|---------------+------------+---------------------+-----------|
+|             4 | CSM        | Block-wise-Transfer | [RFCthis] |
+
+The Block-wise-Transfer option is an elective option (4 is even) and
+carries an "empty" value.  If the option is not given, the peer has no
+information about whether block-wise transfers are supported by the
+emitter or not.  An implementation that supports block-wise transfers
+SHOULD indicate the Block-Wise Transfer option.  If a Max-Message-Size
+option is being indicated (in the same of a different CSM message)
+with a value that is greater than 1152, the Block-Wise Transfer option
+also indicates support for BERT {{-reliable}}.
+
 ## Using the Capability and Settings message for version negotiation
 
 CoAP is defined in RFC 7252 with a version number of 1.  In contrast
@@ -210,7 +233,8 @@ potential future need.
 # Ping and Pong Messages
 
 NOTE: The present specification assumes that the CoAP over TCP
-specification specifies that empty messages ({{-coap}}) can always be
+specification {{-reliable}} specifies that empty messages ({{-coap}})
+can always be
 sent and will be ignored.  This provides for a basic keep-alive
 function that can, e.g., refresh NAT bindings.  In contrast, Ping and
 Pong messages are a bidirectional exchange.
@@ -290,7 +314,6 @@ i.e., the option is elective.)  SECURITY CONSIDERATIONS.
 The Hold-Off option indicates that the server is requesting that the
 peer not reconnect to it for the number of seconds given as the value.
 The value is a uint.  (6 is even, i.e., the option is elective.)
-(Question: Do we need a "go away forever"?)
 
 # Abort Messages {#sec-abort}
 
@@ -368,8 +391,15 @@ An encoded example of the corresponding Pong message is shown in {{fig-pong-exam
 
 The security considerations of {{-coap}} apply.
 
-* The guidance given by an Alternative-Address option cannot be followed blindly.
-* SNI vs. Server-Name: The security is for the SNI name.
+* The guidance given by an Alternative-Address option cannot be
+  followed blindly.  In particular, a peer MUST NOT assume that a
+  successful connection to the Alternative-Address inherits all the
+  security properties of the current connection.
+* SNI vs. Server-Name: Any security negotiated in the TLS handshake is
+  for the SNI name exchanged in the TLS handshake and checked against
+  the certificate provided by the server.  The Server-Name option
+  cannot be used to extend these security properties to the additional
+  server name.
 
 # IANA Considerations {#iana}
 
@@ -378,9 +408,10 @@ The security considerations of {{-coap}} apply.
 IANA is requested to create a third sub-registry for values of the
 Code field in the CoAP header (cf. Section 12.1 of {{-coap}}).
 
-(IANA policy TBD.)
+The IANA policy for future additions to this sub-registry is "IETF
+Review or IESG Approval" as described in {{RFC5226}}.
 
-(remember to copy down values from above)
+(Editor note to be removed: remember to copy down values from above)
 
 | Code | Name    | Reference |
 |------|---------|-----------|
@@ -398,14 +429,17 @@ to the CoAP Option Numbers Registry (Section 12.2 of {{-coap}}), with
 the single change that a fourth column is added to the sub-registry
 that is one of the message codes in the message code subregistry ({{message-codes}}).
 
-(IANA policy TBD.)
+The IANA policy for future additions to this sub-registry is based on
+number ranges for the option numbers, analogous to the policy defined
+in Section 12.2 of {{-coap}}.
 
-(remember to copy down values from above)
+(Editor note to be removed: remember to copy down values from above)
 
 | Option Number | Applies to | Option Name         | Reference |
 |---------------|------------|---------------------|-----------|
 |             1 | CSM        | Server-Name         | [RFCthis] |
 |             2 | CSM        | Max-Message-Size    | [RFCthis] |
+|             4 | CSM        | Block-wise-Transfer | [RFCthis] |
 |             2 | Ping, Pong | Custody             | [RFCthis] |
 |             2 | Release    | Bad-Server-Name     | [RFCthis] |
 |             4 | Release    | Alternative-Address | [RFCthis] |
