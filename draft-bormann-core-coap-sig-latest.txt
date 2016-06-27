@@ -5,7 +5,7 @@
 CORE                                                     C. Bormann, Ed.
 Internet-Draft                                                 K. Hartke
 Intended status: Standards Track                 Universitaet Bremen TZI
-Expires: December 13, 2016                                 June 11, 2016
+Expires: December 29, 2016                                 June 27, 2016
 
 
                         CoAP Signaling Messages
@@ -53,12 +53,12 @@ Status of This Memo
 
 
 
-Bormann & Hartke        Expires December 13, 2016               [Page 1]
+Bormann & Hartke        Expires December 29, 2016               [Page 1]
 
 Internet-Draft           CoAP Signaling Messages               June 2016
 
 
-   This Internet-Draft will expire on December 13, 2016.
+   This Internet-Draft will expire on December 29, 2016.
 
 Copyright Notice
 
@@ -80,25 +80,26 @@ Table of Contents
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
    2.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .   3
    3.  Signaling messages  . . . . . . . . . . . . . . . . . . . . .   3
-   4.  Capability and Settings Messages  . . . . . . . . . . . . . .   3
+   4.  Capability and Settings Messages  . . . . . . . . . . . . . .   4
      4.1.  Server-Name Setting Option  . . . . . . . . . . . . . . .   4
      4.2.  Max-Message-Size Capability Indication Option . . . . . .   5
-     4.3.  Using the Capability and Settings message for version
-           negotiation . . . . . . . . . . . . . . . . . . . . . . .   5
-   5.  Ping and Pong Messages  . . . . . . . . . . . . . . . . . . .   5
+     4.3.  Block-wise-Transfer Capability Indication Option  . . . .   5
+     4.4.  Using the Capability and Settings message for version
+           negotiation . . . . . . . . . . . . . . . . . . . . . . .   6
+   5.  Ping and Pong Messages  . . . . . . . . . . . . . . . . . . .   6
      5.1.  Custody Option  . . . . . . . . . . . . . . . . . . . . .   6
-   6.  Release Messages  . . . . . . . . . . . . . . . . . . . . . .   6
-   7.  Abort Messages  . . . . . . . . . . . . . . . . . . . . . . .   7
-   8.  Examples  . . . . . . . . . . . . . . . . . . . . . . . . . .   8
-   9.  Security Considerations . . . . . . . . . . . . . . . . . . .   9
-   10. IANA Considerations . . . . . . . . . . . . . . . . . . . . .   9
-     10.1.  Message Codes  . . . . . . . . . . . . . . . . . . . . .   9
-     10.2.  Signaling Options  . . . . . . . . . . . . . . . . . . .  10
-   11. References  . . . . . . . . . . . . . . . . . . . . . . . . .  10
-     11.1.  Normative References . . . . . . . . . . . . . . . . . .  10
-     11.2.  Informative References . . . . . . . . . . . . . . . . .  11
-   Acknowledgements  . . . . . . . . . . . . . . . . . . . . . . . .  11
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  11
+   6.  Release Messages  . . . . . . . . . . . . . . . . . . . . . .   7
+   7.  Abort Messages  . . . . . . . . . . . . . . . . . . . . . . .   8
+   8.  Examples  . . . . . . . . . . . . . . . . . . . . . . . . . .   9
+   9.  Security Considerations . . . . . . . . . . . . . . . . . . .  10
+   10. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  10
+     10.1.  Message Codes  . . . . . . . . . . . . . . . . . . . . .  10
+     10.2.  Signaling Options  . . . . . . . . . . . . . . . . . . .  11
+   11. References  . . . . . . . . . . . . . . . . . . . . . . . . .  12
+     11.1.  Normative References . . . . . . . . . . . . . . . . . .  12
+     11.2.  Informative References . . . . . . . . . . . . . . . . .  12
+   Acknowledgements  . . . . . . . . . . . . . . . . . . . . . . . .  12
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  12
 
 1.  Introduction
 
@@ -108,8 +109,7 @@ Table of Contents
 
 
 
-
-Bormann & Hartke        Expires December 13, 2016               [Page 2]
+Bormann & Hartke        Expires December 29, 2016               [Page 2]
 
 Internet-Draft           CoAP Signaling Messages               June 2016
 
@@ -133,8 +133,10 @@ Internet-Draft           CoAP Signaling Messages               June 2016
 3.  Signaling messages
 
    Signaling messages are structured like any other CoAP message; they
-   have a code, a token, options, and optionally a payload.  The code
-   for a signaling message comes from the 7.xx space.
+   have a code, a token, options, and optionally a payload.  (See
+   Section 3 of [RFC7252] for the overall structure, as adapted to the
+   specific transport.)  The code for a signaling message comes from the
+   7.xx space.
 
    Option numbers for signaling messages are specific to the message
    code, i.e., they do not share the number space with CoAP options for
@@ -157,21 +159,24 @@ Internet-Draft           CoAP Signaling Messages               June 2016
    For each message, there is an emitter (that sends the message) and a
    peer receiving the message.
 
-4.  Capability and Settings Messages
-
-   Capability and Settings messages are used for two purposes:
 
 
 
 
 
-Bormann & Hartke        Expires December 13, 2016               [Page 3]
+
+Bormann & Hartke        Expires December 29, 2016               [Page 3]
 
 Internet-Draft           CoAP Signaling Messages               June 2016
 
 
+4.  Capability and Settings Messages
+
+   Capability and Settings messages are used for two purposes:
+
    o  Capability indication options indicate a capability of the emitter
-      to the peer.  Capability options are generally elective options.
+      to the receiving peer.  Capability options are generally elective
+      options.
 
    o  Setting options indicate a setting that will be applied by the
       emitter.  Setting options are generally critical options.
@@ -211,20 +216,19 @@ Internet-Draft           CoAP Signaling Messages               June 2016
    "string" value, with the same restrictions as for Uri-Host
    (Section 5.10 of RFC 7252: length is between 1 and 255).
 
-   For TLS, the initial value for the Server-Name option is given by the
-   SNI value.  SECURITY CONSIDERATIONS.  For Websockets, the initial
-   value for the Server-Name is given by the HTTP Host header field.
 
 
 
 
 
-
-
-Bormann & Hartke        Expires December 13, 2016               [Page 4]
+Bormann & Hartke        Expires December 29, 2016               [Page 4]
 
 Internet-Draft           CoAP Signaling Messages               June 2016
 
+
+   For TLS, the initial value for the Server-Name option is given by the
+   SNI value.  SECURITY CONSIDERATIONS.  For Websockets, the initial
+   value for the Server-Name is given by the HTTP Host header field.
 
 4.2.  Max-Message-Size Capability Indication Option
 
@@ -244,7 +248,41 @@ Internet-Draft           CoAP Signaling Messages               June 2016
    Section 4.6 of [RFC7252], the default value (and the value used when
    this Option is not implemented) is 1152.
 
-4.3.  Using the Capability and Settings message for version negotiation
+4.3.  Block-wise-Transfer Capability Indication Option
+
+   An emitter can indicate that it supports the block-wise transfer
+   protocol defined in [I-D.ietf-core-block].
+
+   The Block-wise-Transfer option is defined as follows:
+
+     +---------------+------------+---------------------+-----------+
+     | Option Number | Applies to | Option Name         | Reference |
+     +---------------+------------+---------------------+-----------+
+     | 4             | CSM        | Block-wise-Transfer | [RFCthis] |
+     +---------------+------------+---------------------+-----------+
+
+   The Block-wise-Transfer option is an elective option (4 is even) and
+   carries an "empty" value.  If the option is not given, the peer has
+   no information about whether block-wise transfers are supported by
+   the emitter or not.  An implementation that supports block-wise
+   transfers SHOULD indicate the Block-Wise Transfer option.  If a Max-
+   Message-Size option is being indicated (in the same of a different
+   CSM message) with a value that is greater than 1152, the Block-Wise
+   Transfer option also indicates support for BERT
+   [I-D.ietf-core-coap-tcp-tls].
+
+
+
+
+
+
+
+Bormann & Hartke        Expires December 29, 2016               [Page 5]
+
+Internet-Draft           CoAP Signaling Messages               June 2016
+
+
+4.4.  Using the Capability and Settings message for version negotiation
 
    CoAP is defined in RFC 7252 with a version number of 1.  In contrast
    to the message layer for UDP and DTLS, the CoAP over TCP message
@@ -263,10 +301,11 @@ Internet-Draft           CoAP Signaling Messages               June 2016
 5.  Ping and Pong Messages
 
    NOTE: The present specification assumes that the CoAP over TCP
-   specification specifies that empty messages ([RFC7252]) can always be
-   sent and will be ignored.  This provides for a basic keep-alive
-   function that can, e.g., refresh NAT bindings.  In contrast, Ping and
-   Pong messages are a bidirectional exchange.
+   specification [I-D.ietf-core-coap-tcp-tls] specifies that empty
+   messages ([RFC7252]) can always be sent and will be ignored.  This
+   provides for a basic keep-alive function that can, e.g., refresh NAT
+   bindings.  In contrast, Ping and Pong messages are a bidirectional
+   exchange.
 
    A Ping message is responded to by a single Pong message with the same
    token.  As with all signaling messages, the recipient of a Ping or
@@ -274,13 +313,6 @@ Internet-Draft           CoAP Signaling Messages               June 2016
 
    Ping and Pong messages carry the code 7.02 (Ping) and 7.03 (Pong),
    respectively.
-
-
-
-Bormann & Hartke        Expires December 13, 2016               [Page 5]
-
-Internet-Draft           CoAP Signaling Messages               June 2016
-
 
                         +------+------+-----------+
                         | Code | Name | Reference |
@@ -298,6 +330,14 @@ Internet-Draft           CoAP Signaling Messages               June 2016
    the present connection ahead of the Ping message that prompted the
    Pong message.  (Note that there is no definition of specific
    application semantics of "processed", but there is an expectation
+
+
+
+Bormann & Hartke        Expires December 29, 2016               [Page 6]
+
+Internet-Draft           CoAP Signaling Messages               June 2016
+
+
    that the emitter of the Ping leading to the Pong with a Custody
    Option should be able to free buffers based on this indication.)
 
@@ -331,13 +371,6 @@ Internet-Draft           CoAP Signaling Messages               June 2016
 
    Release messages carry the code 7.04 (Release).
 
-
-
-Bormann & Hartke        Expires December 13, 2016               [Page 6]
-
-Internet-Draft           CoAP Signaling Messages               June 2016
-
-
                       +------+---------+-----------+
                       | Code | Name    | Reference |
                       +------+---------+-----------+
@@ -346,6 +379,20 @@ Internet-Draft           CoAP Signaling Messages               June 2016
 
    Release messages can indicate one or more reasons using elective
    options; the following options are defined:
+
+
+
+
+
+
+
+
+
+
+Bormann & Hartke        Expires December 29, 2016               [Page 7]
+
+Internet-Draft           CoAP Signaling Messages               June 2016
+
 
      +---------------+------------+---------------------+-----------+
      | Option Number | Applies to | Option Name         | Reference |
@@ -370,7 +417,7 @@ Internet-Draft           CoAP Signaling Messages               June 2016
    The Hold-Off option indicates that the server is requesting that the
    peer not reconnect to it for the number of seconds given as the
    value.  The value is a uint.  (6 is even, i.e., the option is
-   elective.)  (Question: Do we need a "go away forever"?)
+   elective.)
 
 7.  Abort Messages
 
@@ -385,15 +432,6 @@ Internet-Draft           CoAP Signaling Messages               June 2016
 
    Abort messages carry the code 7.05 (Abort).
 
-
-
-
-
-Bormann & Hartke        Expires December 13, 2016               [Page 7]
-
-Internet-Draft           CoAP Signaling Messages               June 2016
-
-
                        +------+-------+-----------+
                        | Code | Name  | Reference |
                        +------+-------+-----------+
@@ -402,6 +440,15 @@ Internet-Draft           CoAP Signaling Messages               June 2016
 
    Abort messages can indicate one or more reasons using elective
    options; the following options are defined:
+
+
+
+
+
+Bormann & Hartke        Expires December 29, 2016               [Page 8]
+
+Internet-Draft           CoAP Signaling Messages               June 2016
+
 
         +---------------+------------+----------------+-----------+
         | Option Number | Applies to | Option Name    | Reference |
@@ -445,7 +492,16 @@ Internet-Draft           CoAP Signaling Messages               June 2016
 
 
 
-Bormann & Hartke        Expires December 13, 2016               [Page 8]
+
+
+
+
+
+
+
+
+
+Bormann & Hartke        Expires December 29, 2016               [Page 9]
 
 Internet-Draft           CoAP Signaling Messages               June 2016
 
@@ -468,9 +524,15 @@ Internet-Draft           CoAP Signaling Messages               June 2016
    The security considerations of [RFC7252] apply.
 
    o  The guidance given by an Alternative-Address option cannot be
-      followed blindly.
+      followed blindly.  In particular, a peer MUST NOT assume that a
+      successful connection to the Alternative-Address inherits all the
+      security properties of the current connection.
 
-   o  SNI vs. Server-Name: The security is for the SNI name.
+   o  SNI vs. Server-Name: Any security negotiated in the TLS handshake
+      is for the SNI name exchanged in the TLS handshake and checked
+      against the certificate provided by the server.  The Server-Name
+      option cannot be used to extend these security properties to the
+      additional server name.
 
 10.  IANA Considerations
 
@@ -479,9 +541,26 @@ Internet-Draft           CoAP Signaling Messages               June 2016
    IANA is requested to create a third sub-registry for values of the
    Code field in the CoAP header (cf.  Section 12.1 of [RFC7252]).
 
-   (IANA policy TBD.)
+   The IANA policy for future additions to this sub-registry is "IETF
+   Review or IESG Approval" as described in [RFC5226].
 
-   (remember to copy down values from above)
+   (Editor note to be removed: remember to copy down values from above)
+
+
+
+
+
+
+
+
+
+
+
+
+Bormann & Hartke        Expires December 29, 2016              [Page 10]
+
+Internet-Draft           CoAP Signaling Messages               June 2016
+
 
                       +------+---------+-----------+
                       | Code | Name    | Reference |
@@ -497,15 +576,6 @@ Internet-Draft           CoAP Signaling Messages               June 2016
                       | 7.05 | Abort   | [RFCthis] |
                       +------+---------+-----------+
 
-
-
-
-
-Bormann & Hartke        Expires December 13, 2016               [Page 9]
-
-Internet-Draft           CoAP Signaling Messages               June 2016
-
-
 10.2.  Signaling Options
 
    IANA is requested to create a sub-registry for signaling options
@@ -514,9 +584,11 @@ Internet-Draft           CoAP Signaling Messages               June 2016
    the sub-registry that is one of the message codes in the message code
    subregistry (Section 10.1).
 
-   (IANA policy TBD.)
+   The IANA policy for future additions to this sub-registry is based on
+   number ranges for the option numbers, analogous to the policy defined
+   in Section 12.2 of [RFC7252].
 
-   (remember to copy down values from above)
+   (Editor note to be removed: remember to copy down values from above)
 
      +---------------+------------+---------------------+-----------+
      | Option Number | Applies to | Option Name         | Reference |
@@ -524,6 +596,8 @@ Internet-Draft           CoAP Signaling Messages               June 2016
      | 1             | CSM        | Server-Name         | [RFCthis] |
      |               |            |                     |           |
      | 2             | CSM        | Max-Message-Size    | [RFCthis] |
+     |               |            |                     |           |
+     | 4             | CSM        | Block-wise-Transfer | [RFCthis] |
      |               |            |                     |           |
      | 2             | Ping, Pong | Custody             | [RFCthis] |
      |               |            |                     |           |
@@ -536,6 +610,14 @@ Internet-Draft           CoAP Signaling Messages               June 2016
      | 2             | Abort      | Bad-CSM-Option      | [RFCthis] |
      +---------------+------------+---------------------+-----------+
 
+
+
+
+Bormann & Hartke        Expires December 29, 2016              [Page 11]
+
+Internet-Draft           CoAP Signaling Messages               June 2016
+
+
 11.  References
 
 11.1.  Normative References
@@ -545,24 +627,21 @@ Internet-Draft           CoAP Signaling Messages               June 2016
               DOI 10.17487/RFC2119, March 1997,
               <http://www.rfc-editor.org/info/rfc2119>.
 
+   [RFC5226]  Narten, T. and H. Alvestrand, "Guidelines for Writing an
+              IANA Considerations Section in RFCs", BCP 26, RFC 5226,
+              DOI 10.17487/RFC5226, May 2008,
+              <http://www.rfc-editor.org/info/rfc5226>.
+
    [RFC7252]  Shelby, Z., Hartke, K., and C. Bormann, "The Constrained
               Application Protocol (CoAP)", RFC 7252,
               DOI 10.17487/RFC7252, June 2014,
               <http://www.rfc-editor.org/info/rfc7252>.
 
-
-
-
-
-
-
-
-Bormann & Hartke        Expires December 13, 2016              [Page 10]
-
-Internet-Draft           CoAP Signaling Messages               June 2016
-
-
 11.2.  Informative References
+
+   [I-D.ietf-core-block]
+              Bormann, C. and Z. Shelby, "Block-wise transfers in CoAP",
+              draft-ietf-core-block-20 (work in progress), April 2016.
 
    [I-D.ietf-core-coap-tcp-tls]
               Bormann, C., Lemay, S., Technologies, Z., and H.
@@ -586,6 +665,13 @@ Authors' Addresses
 
    Phone: +49-421-218-63921
    Email: cabo@tzi.org
+
+
+
+
+Bormann & Hartke        Expires December 29, 2016              [Page 12]
+
+Internet-Draft           CoAP Signaling Messages               June 2016
 
 
    Klaus Hartke
@@ -613,4 +699,30 @@ Authors' Addresses
 
 
 
-Bormann & Hartke        Expires December 13, 2016              [Page 11]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Bormann & Hartke        Expires December 29, 2016              [Page 13]
