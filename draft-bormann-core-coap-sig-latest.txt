@@ -246,7 +246,9 @@ Internet-Draft           CoAP Signaling Messages               June 2016
    The Max-Message-Size option is an elective option (2 is even) and
    carries a "uint" value, indicating the message size in bytes.  As per
    Section 4.6 of [RFC7252], the default value (and the value used when
-   this Option is not implemented) is 1152.
+   this Option is not implemented) is 1152.  (Note that a peer
+   implementation that relies on this option being indicated and having
+   a certain minimum value will enjoy only limited interoperability.)
 
 4.3.  Block-wise-Transfer Capability Indication Option
 
@@ -270,8 +272,6 @@ Internet-Draft           CoAP Signaling Messages               June 2016
    CSM message) with a value that is greater than 1152, the Block-Wise
    Transfer option also indicates support for BERT
    [I-D.ietf-core-coap-tcp-tls].
-
-
 
 
 
