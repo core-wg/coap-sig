@@ -17,7 +17,7 @@ title: CoAP Signaling Messages
 # abbrev:
 area: Applications and Real-time Area (art)
 wg: CORE
-date: 2016-06-27
+#date: 2016-06-27
 author:
 - role: editor
   ins: C. Bormann
