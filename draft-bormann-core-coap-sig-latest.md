@@ -192,7 +192,9 @@ The Max-Message-Size option is defined as follows:
 The Max-Message-Size option is an elective option (2 is even) and
 carries a "uint" value, indicating the message size in bytes.  As per
 Section 4.6 of {{-coap}}, the default value (and the value used when
-this Option is not implemented) is 1152.
+this Option is not implemented) is 1152.  (Note that a peer implementation
+that relies on this option being indicated and having a certain minimum
+value will enjoy only limited interoperability.)
 
 ## Block-wise-Transfer Capability Indication Option
 
